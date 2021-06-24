@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ja" class="text-gray-900 leading-tight">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block head_title %}Django CRUD{% endblock %}</title>
+
+  {% include './layouts/_head_icon.html' %}
+  {% block extracss %}{% endblock %}
+
+</head>
+<body class="min-h-screen bg-gray-50">
+
+  {% block hero %}{% endblock %}
+
+  <div id="app" class="relative overflow-hidden js-blur z-10 flex items-center justify-center sm:mx-auto">
+    {% block content %}{% endblock %}
+  </div>
+
+  {% include 'layouts/_footer.html' %}
+
+  {% block extrajs %}{% endblock %}
+</body>
+</html>

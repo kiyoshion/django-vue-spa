@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block extracss %}
+<style>
+  .tab-list .js-current {
+    color: dodgerblue;
+    border-bottom: 2px solid dodgerblue;
+  }
+</style>
+{% endblock %}
+
+{% block head_title %}Home | {{ block.super }}{% endblock %}
+
+{% block hero %}
+<div class="bg-white bg-blur relative overflow-hidden w-full flex items-center h-80 bg-cover bg-no-repeat blur-sm bg-center z-0" {% if hero %} style="background-image: url('{{ hero }}')"; {% else %} style="background-image: url('/static/img/bg-0.jpg')"; {% endif %}>
+  <div class="relative z-20 max-w-5xl container mx-4 lg:mx-auto flex flex-col sm:flex-row items-center justify-between">
+    <div class="sm:w-1/2">
+      <div class="flex flex-col sm:flex-row text-center sm:text-left items-center sm:items-start">
+        <div class="mr-0 mb-2 sm:mr-4 sm:mb-0 w-16">
+          <form id="avatar-form" method="POST" enctype="multipart/form-data">
+            <input id="input" type="file" name="avatar" style="display: none">
+          </form>
+          <div id="avatar" class="relative hover:opacity-80 z-20 cursor-pointer">
+            <img class="relative hover:opacity-80 rounded-full cursor-pointer" src="{{ user.getAvatar }}" alt="{{ user.username }}" width="64" height="64">
+            <span class="absolute -bottom-2 -right-2 z-10 text-xs text-gray-100 bg-gray-800 rounded-full p-2">
+              <i class="fas fa-camera"></i>
+            </span>
+          </div>
+        </div>
+        <div class="text-white">
+          <h2 class="text-2xl mb-2">{{ user.get_username }}</h2>
+          {% if user.profile %}<p>{{ user.profile }}</p>{% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a class="btn btn-ghost" href="{% url 'user.update' user.id %}">プロフィール編集</a>
+    </div>
+  </div>
+</div>
+<div class="bg-white w-full">
+  <div class="max-w-5xl container lg:mx-auto">
+    <div class="tab-list flex justify-center sm:justify-start">
+      <div data-id="tab-1" class="js-current text-center w-32 p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">アイテム</div>
+      <div data-id="tab-2" class="text-center w-32 p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">いいね</div>
+      <div data-id="tab-3" class="text-center w-32 p-2 sm:p-4 font-bold hover:opacity-80 text-sm cursor-pointer select-none">コメント</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="tab-items container mx-2 sm:mx-4 md:mx-0 my-8 lg:max-w-5xl">
+  <div id="tab-1" class="block">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+      {% if myitems %}
+        {% for item in myitems %}
+          {% include './components/_card.html' %}
+        {% endfor %}
+      {% else %}
+        <p>まだ投稿していません</p>
+      {% endif %}
+    </div>
+  </div>
+  <div id="tab-2" class="hidden">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+      {% if mylikes %}
+        {% for item in mylikes %}
+          {% include './components/_card.html' %}
+        {% endfor %}
+      {% else %}
+        <p>いいねしていません</p>
+      {% endif %}
+    </div>
+  </div>
+  <div id="tab-3" class="hidden">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 md:gap-6 mx-2 sm:mx-auto">
+    {% if mycomments is not False %}
+      {% for c in mycomments %}
+      <a href="{% url 'item.detail' c.item_id %}">
+        {% include './components/_comment.html' %}
+      </a>
+      {% endfor %}
+    {% else %}
+      <p>コメントしていません</p>
+    {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  fetchUser.setAvatar('{{ user.id }}')
+  fetchItem.like()
+  libs.setTabs()
+</script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends '../base.html' %}
+
+{% load static %}
+
+{% block head_title %}{{ object.title }} | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-4 sm:mx-auto my-8">
+  <h1 class="text-2xl font-bold mb-4">{{ object.title }}</h1>
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center">
+      <img class="w-8 h-8 object-cover rounded-full mr-2" src="{{ object.author.getAvatar }}" alt="{{ object.author.username }}">
+      <div>
+        <p class="mb-1">{{ object.author.username }}</p>
+        <div class="flex">
+          <i class="fas fa-calendar-alt text-gray-400 text-xs mr-1"></i>
+          <span class="text-gray-400 text-xs">{{ object.created_at|date:"Y/m/j" }}</span>
+        </div>
+      </div>
+    </div>
+    {% if object.hasTags is not None %}
+    <div class="flex">
+      {% for t in object.hasTags %}
+      <span class="bg-gray-200 rounded-sm ml-2"><a class="block text-xs px-4 py-2" href="{% url 'item.tag_list' t.id %}">{{ t.name }}</a></span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  <div class="shadow-sm">
+    <div>
+      <img src="{{ object.getThumbnailImage }}" alt="{{ object.title }}">
+    </div>
+    <div class="p-8 mb-4 bg-white">
+      <p>{{ object.body }}</p>
+    </div>
+  </div>
+  {% if user.id == object.author.id %}
+  <div class="flex justify-end">
+    <div class="flex text-blue-500">
+      <div class="flex mr-4 select-none">
+        <i class="fas fa-pencil-alt mr-1"></i>
+        <a class="" href="{% url 'item.update' object.pk %}">編集</a>
+      </div>
+      <div class="flex select-none">
+        <i class="fas fa-trash-alt mr-1"></i>
+        <button id="btn-del" class="" href="">削除</button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="flex items-center justify-between">
+    <h3 class="text-xl my-4 font-bold">コメント</h3>
+    <a class="text-gray-400 text-sm" href="#comment-area">コメントを書く</a>
+  </div>
+  {% if object.comment__count > 0 %}
+    <div class="grid grid-cols-1 gap-y-4">
+    {% for c in object.comments %}
+      {% include '../components/_comment.html' %}
+    {% endfor %}
+    </div>
+  {% else %}
+  <p>コメントはありません</p>
+  {% endif %}
+  <a class="btn btn-gray my-4" href="{% url 'item.list' %}">もどる</a>
+  <h3 id="comment-area" class="text-xl my-4 font-bold">コメントを書く</h3>
+  <div>
+    <form action="{% url 'item.create_comment' object.id %}" method="POST">
+      {% csrf_token %}
+      <textarea name="comment" id="" cols="50" rows="5" class="input"></textarea>
+      <div class="text-center">
+        <button type="submit" class="btn btn-black btn-wide">送信</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  fetchItem.del('{{ object.id }}')
+</script>
+{% endblock %}

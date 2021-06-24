@@ -1,0 +1,21 @@
+[[source]]
+name="pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+django-debug-toolbar = "*"
+
+[packages]
+Django = "==3.2.3"
+djangorestframework = "*"
+djangorestframework-simplejwt = "*"
+djoser = "*"
+django-filter = "*"
+gunicorn = "==20.0.4"
+pillow = "*"
+django-imagekit = "*"
+django-cleanup = "*"
+
+[requires]
+python_version = "3.8"
